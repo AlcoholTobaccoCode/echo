@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+a {
+  color: unset;
+}
+
+a:active, a:hover, a:target {
+  color: unset;
+}

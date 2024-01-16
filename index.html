@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>青山个人测试网</title>
+    <!-- <title>青山个人测试网</title> -->
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <!-- 引入 基础依赖 -->
+    <script src="common/base.js"></script>
+    <link rel="stylesheet" href="static/css/index/index.min.css" />
+
+    <style>
+      .beian {
+        transition: color ease-in-out 0.3s;
+      }
+
+      .beian:hover {
+        color: rgba(222, 96, 64, 1);
+      }
+    </style>
+  </head>
+
+  <!-- 主要背景色先写死 -->
+
+  <body style="background-color: #faf7f7">
+    <!-- S 根元素 -->
+    <div id="app">
+      <!-- <div class="info" v-if="false">
+            <span class="from">{{mottoConfig.mottoFrom}}</span>
+            <span class="editor" v-if="mottoConfig.mottoEdit.length">{{mottoConfig.mottoEdit}}</span>
+        </div> -->
+      <div class="container" id="container">
+        <!-- <div class="info-export" v-if="true">
+                <span class="from">{{mottoConfig.mottoFrom}}</span>
+                <span class="editor" v-if="mottoConfig.mottoEdit.length">{{mottoConfig.mottoEdit}}</span>
+            </div> -->
+        <!-- E 导出时来源 -->
+
+        <div class="words">
+          <p class="content" v-html="mottoConfig.mottoContent"></p>
+          <div class="info">
+            <span class="from">{{mottoConfig.mottoFrom}}</span>
+            <span class="editor" v-if="mottoConfig.mottoEdit.length"
+              >{{mottoConfig.mottoEdit}}</span
+            >
+          </div>
+        </div>
+        <!-- E 言语 -->
+        <div v-if="colors.name" class="color-instructions">{{colors.name}}</div>
+        <!-- E 颜色文本 -->
+
+        <!-- E 文字区域 -->
+        <div class="anim">
+          <!-- <waves :lines="colors.lines" @render="renderWaves"></waves> -->
+          <canvas
+            id="canvas"
+            style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 100%;height: 100%;"
+          ></canvas>
+        </div>
+        <!-- E 动画区域 -->
+      </div>
+      <div class="footer">
+        <ul>
+          <li>
+            本网站参考Chrome扩展 @<a
+              target="_black"
+              href="https://github.com/unicar9/jizhi"
+              >几枝</a
+            >
+          </li>
+          <li>
+            颜色数据取自 @<a target="_black" href="http://zhongguose.com/"
+              >中国色</a
+            >
+          </li>
+          <li>心血来潮开发，非商用</li>
+          <li>
+            2024 ©青山个人测试网 -
+            <a class="beian" href="https://beian.miit.gov.cn/" target="_blank"
+              >浙ICP备19028628号-3</a
+            >
+          </li>
+          <!-- <li class="copy-right">Copyright © 2023, DuQingShan All rights reserved. 青山测试站 | 浙ICP 备 19028628 号</li> -->
+        </ul>
+      </div>
+      <!-- E 底部版权 -->
+      <!-- E 主要容器 -->
+
+      <van-icon
+        name="down"
+        class="setting"
+        id="setting"
+        size=".36rem"
+        @click="exportImg"
+      ></van-icon>
+      <!-- <van-icon name="exchange" class="setting" id="setting" size=".36rem" @click="settingShow = true"></van-icon> -->
+      <van-popup
+        v-model="settingShow"
+        position="bottom"
+        :style="{ width: '100%', height: '40%' }"
+      >
+        <van-tree-select
+          :items="treeListArr"
+          :main-active-index.sync="treeListIndex"
+        >
+          <template slot="content">
+            <div v-if="treeListIndex === 0">
+              <van-form>
+                <van-field name="switch" :label="switchChangeApiText">
+                  <template slot="input">
+                    <van-switch
+                      v-model="switchChangeApi"
+                      size="20"
+                      @input="switchChange"
+                    ></van-switch>
+                  </template>
+                </van-field>
+              </van-form>
+            </div>
+            <div v-if="treeListIndex === 1"></div>
+          </template>
+        </van-tree-select>
+        <!-- E 设置树 -->
+      </van-popup>
+      <!-- E 设置 -->
+
+      <van-popup
+        v-model="exportImgShow"
+        :style="{ width: '90%', height: '90%', overflow: 'hidden' }"
+      >
+        <div class="export-content">
+          <img :src="imgURL" alt="导出" />
+          <p>长按保存</p>
+        </div>
+      </van-popup>
+      <!-- E 弹簧 -->
+    </div>
+    <!-- E 根元素 -->
+  </body>
+  <!-- <script src="/echo/components/Waves/waves.js"></script> -->
+  <!-- <script src="/util/dataJson/colors.json"></script> -->
+  <script type="module">
+    let that = null;
+    new Vue({
+      el: "#app",
+      data() {
+        return {
+          // bodyTheme: '#e6e6e6',
+          //* 当前颜色相关
+          colors: {
+            //* 波浪颜色
+            lines: "",
+            name: "",
+            CMYK: [19, 99, 86, 11],
+            RGB: [166, 27, 41],
+            hex: "",
+            name: "",
+            pinyin: "",
+          },
+          showPopover: false, //* 配置区域
+          settingShow: false, //* 设置弹窗
+          //* 设置树默认激活
+          treeListIndex: 0,
+          //* 设置树数组
+          treeListArr: [
+            {
+              id: 0,
+              text: "设置",
+            },
+            {
+              id: 1,
+              text: "背景",
+            },
+          ],
+          imgURL: "", //* 将当前页面转换为 base64 导出
+          exportImgShow: false, //* 图片导出弹窗
+          //* ******************************* E 公共区域
+          switchChangeApi: false, //* 切换诗词
+          switchChangeApiText: "一言随机", //*
+
+          //* ******************************* E 设置区域
+          mottoConfig: {
+            showType: {
+              flexDirection: "", //*
+            },
+            show: true, //* 是否显示一言组件
+            loading: true, //* 骨架屏加载
+            mottoFrom: "",
+            mottoEdit: "",
+            mottoContent: "",
+            checkMottoTimerObj: null, //* 控制一言请求间隔
+            exchange: "on",
+            showSetting: false,
+          },
+          //* ******************************* E 一言相关
+        };
+      },
+      mounted() {
+        that = this;
+
+        //* motto 请求
+        this.getMottoInNetWork();
+
+        //* 获取颜色
+        this.getColors();
+
+        window.addEventListener('resize', this.resizeRenderWaves);
+      },
+      methods: {
+        // resizeRenderWaves() {
+        //     this.renderWaves();
+        // },
+        //* 获取历史设置
+        cacheHistorySetting() {},
+        //* 切换诗词
+        switchChange() {
+          // console.info('🚀 ~ file: , line: ', this.switchChangeApi);
+          if (this.switchChangeApi) {
+            //* true 诗词
+            this.switchChangeApiText = "诗词随机";
+          } else {
+            //* false 一言
+            this.switchChangeApiText = "一言随机";
+          }
+        },
+        //* 导出图片
+        exportImg() {
+          html2canvas(document.querySelector("#container")).then((canvas) => {
+            let imgUrl = canvas.toDataURL("image/png");
+            // console.log('✨ ~ file: index.html ~ line 169 ~ html2canvas ~ imgUrl', imgUrl);
+            that.imgURL = imgUrl;
+            that.exportImgShow = true;
+            that.$nextTick(() => {
+              document.querySelector(".export-content p").style.fontFamily =
+                "JXZhuoKai";
+            });
+            // window.location.href = imgUrl;
+            /* let dataURLtoBlob = function (dataurl) {
+                        var arr = dataurl.split(','),mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+                        while(n--){
+                        u8arr[n] = bstr.charCodeAt(n);
+                        }
+                        return new Blob([u8arr], {type:mime});
+                    }
+                    console.info('🚀 ~ file: , line: ', dataURLtoBlob(imgUrl));
+                    console.info('🚀 ~ file: , line: ', URL.createObjectURL(dataURLtoBlob(imgUrl))); */
+          });
+        },
+        //* ********************************************** E 公共区域
+        //* 从网络获取一言
+        getMottoInNetWork() {
+          if (this.checkMottoTimerObj) {
+            setTimeout(function () {
+              that.checkMottoTimer();
+            }, 1000);
+            this.$toast("别急, 慢慢来");
+            return;
+          }
+
+          this.checkMottoTimerObj = setTimeout(function () {
+            /**********************************
+             * 一言开放 api
+             * https://v1.hitokoto.cn/
+             * 感谢创作团队 @萌创团队
+             *             @a632079 in Github
+             * 接口参数解释:
+             * * id: 本条一言的 id
+             *      i 可以使用 https://hitokoto.cn?id=id 查看一言的完整信息
+             * * hitokoto: 一言正文。编码方式 `Unicode`。使用 `utf-8`
+             * * type: 类型。详情参考: https://ftp.bmp.ovh/imgs/2021/06/56ef96c9dd607485.png
+             * * from: 一言的出处
+             * * creator: 添加者
+             * * created_at: 添加时间
+             * * 注意: 如果 `encode` 参数为 `text`, 那么输出的只有一言正文
+             **********************************/
+            config.ajax.custom(
+              "https://v1.hitokoto.cn?c=d&max_length=20",
+              {},
+              function (result) {
+                that.checkMottoTimer();
+                that.mottoConfig.loading = false;
+                if (result) {
+                  if (result.from_who) {
+                    that.mottoConfig.mottoEdit = result.from_who;
+                  }
+                  if (result.from) {
+                    that.mottoConfig.mottoFrom = "「" + result.from + "」";
+                  }
+                  let content = result.hitokoto,
+                    newContent = "";
+                  if (content && content.indexOf(",")) {
+                    newContent = content
+                      .replace(/，/g, "，<br />")
+                      .replace(/。/g, "。<br />");
+                  } else {
+                    newContent = content;
+                  }
+                  // console.log('✨ ~ file: index.html ~ line 268 ~ newContent', newContent);
+                  that.mottoConfig.mottoContent = newContent;
+                }
+              },
+              function (err) {
+                that.checkMottoTimer();
+                that.mottoConfig.loading = false;
+                $.log.error(JSON.stringify(err));
+              },
+              null,
+              {
+                type: "get", //* 这个 api 需要使用 get 请求
+              }
+            );
+          }, 1000);
+        },
+        //* 一言请求定时函数检测
+        checkMottoTimer() {
+          clearTimeout(this.checkMottoTimerObj);
+        },
+        //* ********************************************** E 一言相关
+
+        //* ********************************************** E 诗词相关
+        //*  获取颜色
+        getColors() {
+          config.ajax.custom(
+            "/util/dataJson/colors.json",
+            {},
+            function (result) {
+              let randomIndex = parseInt(Math.random() * (526 - 0 + 1));
+              if (result) {
+                if (result[randomIndex]) {
+                  let rgb =
+                    result[randomIndex].RGB[0] +
+                    "," +
+                    result[randomIndex].RGB[1] +
+                    "," +
+                    result[randomIndex].RGB[2];
+                  let lines = [
+                    "rgba(" + rgb + ", 0.2)",
+                    "rgba(" + rgb + ", 0.2)",
+                    "rgba(" + rgb + ", 0.2)",
+                    "rgba(" + rgb + ", 0.5)",
+                  ];
+
+                  that.colors.lines = lines;
+                  // console.log('✨ ~ file: index.html ~ line 304 ~ getColors ~ that.colors.lines', that.colors.lines);
+                  that.colors.CMYK = result[randomIndex].CMYK;
+                  that.colors.RGB = result[randomIndex].RGB;
+                  that.colors.hex = result[randomIndex].hex;
+                  that.colors.name = result[randomIndex].name;
+                  that.colors.pinyin = result[randomIndex].pinyin;
+                  that.renderWaves();
+                  that.$nextTick(() => {
+                    document.querySelector(".words").style.fontFamily =
+                      "JXZhuoKai";
+                    document.querySelector(
+                      ".color-instructions"
+                    ).style.fontFamily = "JXZhuoKai";
+                    // document.querySelector('.info-export').style.fontFamily = 'JXZhuoKai';
+                  });
+                }
+              } else {
+                that.renderWaves();
+              }
+            },
+            function (err) {
+              that.renderWaves();
+            },
+            null,
+            {
+              type: "get", //* 这个 api 需要使用 get 请求
+            }
+          );
+        },
+        //* ********************************************** E 颜色请求
+        //* 背景波浪 canvas
+        renderWaves() {
+          let canvas = document.getElementById("canvas");
+          let ctx = canvas.getContext("2d");
+          canvas.width = canvas.parentNode.offsetWidth;
+          canvas.height = canvas.parentNode.offsetHeight;
+          //如果浏览器支持requestAnimFrame则使用requestAnimFrame否则使用setTimeout
+          window.requestAnimFrame = (function () {
+            return (
+              window.requestAnimationFrame ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame ||
+              function (callback) {
+                window.setTimeout(callback, 1000 / 60);
+              }
+            );
+          })();
+          //初始角度为0
+          let step = 0;
+          //定义三条不同波浪的颜色
+          let lines = that.colors.lines || [
+            "rgba(241,109,88, 0.2)",
+            "rgba(241,109,88, 0.2)",
+            "rgba(241,109,88, 0.2)",
+            "rgba(241,109,88, 0.5)",
+          ];
+
+          function loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            step++;
+            //画3个不同颜色的矩形
+            for (let j = lines.length - 1; j >= 0; j--) {
+              ctx.fillStyle = lines[j];
+              //每个矩形的角度都不同，每个之间相差45度
+              let angle = ((step + j * 100) * Math.PI) / 180;
+              let deltaHeight = Math.sin(angle) * 50;
+              let deltaHeightRight = Math.cos(angle) * 50;
+              ctx.beginPath();
+              ctx.moveTo(0, canvas.height / 2 + deltaHeight);
+              ctx.bezierCurveTo(
+                canvas.width / 2,
+                canvas.height / 2 + deltaHeight - 50,
+                canvas.width / 2,
+                canvas.height / 2 + deltaHeightRight - 50,
+                canvas.width,
+                canvas.height / 2 + deltaHeightRight
+              );
+              ctx.lineTo(canvas.width, canvas.height);
+              ctx.lineTo(0, canvas.height);
+              ctx.lineTo(0, canvas.height / 2 + deltaHeight);
+              ctx.closePath();
+              ctx.fill();
+            }
+            requestAnimFrame(loop);
+          }
+          loop();
+        },
+        //* ********************************************** E 水波
+      },
+    });
+  </script>
+</html>

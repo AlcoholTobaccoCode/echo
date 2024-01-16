@@ -1,0 +1,237 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: 'JXZhuoKai';
+  src: url('/static/font/JXZhuoKai.woff');
+}
+
+//* S 公共区域
+
+.bg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: .6;
+}
+
+.container {
+  box-sizing: border-box;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: .5rem;
+
+  .words {
+    z-index: 2;
+    color: rgb(17, 17, 17);
+    // font-family: JXZhuoKai;
+    top: 40vh;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50vw;
+    text-align: center;
+    opacity: 0.8;
+    word-break: keep-all;
+    transition: top 500ms ease-in-out 0s;
+    width: fit-content;
+    // animation: 1s ease-in 0s 1 normal none running kwANuy;
+
+    &_rl {
+      writing-mode: vertical-rl;
+      writing-mode: tb-rl;
+    }
+
+    //* 竖版展示
+
+    .content {
+      font-size: .32rem;
+      word-break: break-all;
+      max-height: 60vh;
+    }
+
+    //* E 主要内容
+
+
+    .info {
+
+      .from {
+        font-size: .14rem;
+      }
+
+      //* E 出处
+
+      .editor {
+        color: rgb(255, 255, 255);
+        background-color: rgb(194, 0, 0);
+        border-radius: 3px;
+        padding: 3px 4px 3px 3px;
+        margin: 0.5em;
+        font-size: .12rem;
+        letter-spacing: -1px;
+      }
+
+      //* E 作者
+    }
+
+    //* E 相关信息
+  }
+
+  //* 文本区域
+
+  .color-instructions {
+    // font-family: JXZhuoKai;
+    position: absolute;
+    font-size: .5rem;
+    right: 0px;
+    top: .1rem;
+    color: rgba(0, 0, 0, 0.1);
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    transform: translate(10%, -5%);
+    // opacity: 0;
+    // animation: 5s ease 0s 1 normal none running eJJvXg;
+  }
+
+  //* 颜色说明
+
+  .anim {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 70vh;
+  }
+
+  //* 动画区域
+}
+
+.footer {
+  position: fixed;
+  right: 0;
+  bottom: .1rem;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #fffafa;
+  z-index: 2;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+//* E 主要容器
+
+.motto-exchange {
+  transition: color ease-in-out .5s;
+
+  &[data-theme="off"] {
+    color: #999;
+  }
+
+  //* 关闭随机
+
+  &[data-theme="on"] {
+    color: #17d562;
+  }
+
+  //* 开启随机
+}
+
+//* 一言随机按钮
+//* E motto
+
+.setting {
+  position: fixed;
+  right: .1rem;
+  bottom: .1rem;
+  color: rgba(0, 0, 0, .5);
+  z-index: 5;
+  opacity: .6;
+  transition: all ease-in-out .3s;
+
+  &:active {
+    color: rgba(0, 0, 0, 1);
+    opacity: 1;
+  }
+}
+
+.random-motto {
+  position: fixed;
+  right: .5rem;
+  bottom: .1rem;
+  color: rgba(0, 0, 0, .5);
+  z-index: 5;
+  opacity: .6;
+  transition: all ease-in-out .3s;
+
+  &:active {
+    color: rgba(0, 0, 0, 1);
+    opacity: 1;
+  }
+}
+
+//* E 设置按钮
+
+
+.info-export {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: .1rem;
+  color: rgb(17, 17, 17);
+  // font-family: JXZhuoKai;
+  z-index: 2;
+  opacity: 0.8;
+  transition: top 500ms ease-in-out 0s;
+
+  .from {
+    font-size: .14rem;
+  }
+
+  //* E 出处
+
+  .editor {
+    color: rgb(255, 255, 255);
+    background-color: rgb(194, 0, 0);
+    border-radius: 3px;
+    padding: 3px 4px 3px 3px;
+    margin: 0.5em;
+    font-size: .12rem;
+    letter-spacing: -1px;
+  }
+
+  //* E 作者
+}
+
+//* 导出时来源信息
+
+.export-content {
+  padding: .1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  img {
+    width: 98%;
+    height: 98%;
+    box-shadow: 0 0 .1rem .1rem rgba(0, 0, 0, .2);
+  }
+
+  p {
+    // font-family: JXZhuoKai;
+    display: flex;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,188 @@
+@font-face {
+  font-family: 'JXZhuoKai';
+  src: url("/static/font/JXZhuoKai.woff");
+}
+
+.bg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: .6;
+}
+
+.container {
+  box-sizing: border-box;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: .5rem;
+}
+
+.container .words {
+  z-index: 2;
+  color: #111111;
+  top: 40vh;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50vw;
+  text-align: center;
+  opacity: 0.8;
+  word-break: keep-all;
+  transition: top 500ms ease-in-out 0s;
+  width: fit-content;
+}
+
+.container .words_rl {
+  writing-mode: vertical-rl;
+  writing-mode: tb-rl;
+}
+
+.container .words .content {
+  font-size: .32rem;
+  word-break: break-all;
+  max-height: 60vh;
+}
+
+.container .words .info .from {
+  font-size: .14rem;
+}
+
+.container .words .info .editor {
+  color: white;
+  background-color: #c20000;
+  border-radius: 3px;
+  padding: 3px 4px 3px 3px;
+  margin: 0.5em;
+  font-size: .12rem;
+  letter-spacing: -1px;
+}
+
+.container .color-instructions {
+  position: absolute;
+  font-size: .5rem;
+  right: 0px;
+  top: .1rem;
+  color: rgba(0, 0, 0, 0.1);
+  -webkit-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  transform: translate(10%, -5%);
+}
+
+.container .anim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70vh;
+}
+
+.footer {
+  position: fixed;
+  right: 0;
+  bottom: .1rem;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #fffafa;
+  z-index: 2;
+}
+
+.footer ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.motto-exchange {
+  transition: color ease-in-out .5s;
+}
+
+.motto-exchange[data-theme="off"] {
+  color: #999;
+}
+
+.motto-exchange[data-theme="on"] {
+  color: #17d562;
+}
+
+.setting {
+  position: fixed;
+  right: .1rem;
+  bottom: .1rem;
+  color: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  opacity: .6;
+  transition: all ease-in-out .3s;
+}
+
+.setting:active {
+  color: black;
+  opacity: 1;
+}
+
+.random-motto {
+  position: fixed;
+  right: .5rem;
+  bottom: .1rem;
+  color: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  opacity: .6;
+  transition: all ease-in-out .3s;
+}
+
+.random-motto:active {
+  color: black;
+  opacity: 1;
+}
+
+.info-export {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: .1rem;
+  color: #111111;
+  z-index: 2;
+  opacity: 0.8;
+  transition: top 500ms ease-in-out 0s;
+}
+
+.info-export .from {
+  font-size: .14rem;
+}
+
+.info-export .editor {
+  color: white;
+  background-color: #c20000;
+  border-radius: 3px;
+  padding: 3px 4px 3px 3px;
+  margin: 0.5em;
+  font-size: .12rem;
+  letter-spacing: -1px;
+}
+
+.export-content {
+  padding: .1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.export-content img {
+  width: 98%;
+  height: 98%;
+  box-shadow: 0 0 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+}
+
+.export-content p {
+  display: flex;
+  justify-content: center;
+}
