@@ -12,8 +12,7 @@
  */
 
 //* 系统根目录
-var $rootPath = '/';
-// var $rootPath = '';
+var $rootPath = './';
 
 //* 通用js和css
 ;

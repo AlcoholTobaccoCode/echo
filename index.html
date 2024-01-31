@@ -7,8 +7,8 @@
     <!-- <title>青山个人测试网</title> -->
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <!-- 引入 基础依赖 -->
-    <script src="common/base.js"></script>
-    <link rel="stylesheet" href="static/css/index/index.min.css" />
+    <script src="./common/base.js"></script>
+    <link rel="stylesheet" href="./static/css/index/index.min.css" />
 
     <style>
       .beian {
@@ -55,7 +55,14 @@
           <!-- <waves :lines="colors.lines" @render="renderWaves"></waves> -->
           <canvas
             id="canvas"
-            style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 100%;height: 100%;"
+            style="
+              position: absolute;
+              top: 0px;
+              left: 0px;
+              z-index: 1;
+              width: 100%;
+              height: 100%;
+            "
           ></canvas>
         </div>
         <!-- E 动画区域 -->
@@ -80,6 +87,20 @@
             <a class="beian" href="https://beian.miit.gov.cn/" target="_blank"
               >浙ICP备19028628号-3</a
             >
+          </li>
+          <li>
+            <p
+              class="site_police beian"
+              data-immersive-translate-walked="b96ec8e9-866c-4878-a2f4-0b5c32f069a2"
+            >
+              <a
+                href="https://beian.mps.gov.cn/#/query/webSearch?code=33010802013379"
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                data-immersive-translate-walked="b96ec8e9-866c-4878-a2f4-0b5c32f069a2"
+                >浙公网安备33010802013379号</a
+              >
+            </p>
           </li>
           <!-- <li class="copy-right">Copyright © 2023, DuQingShan All rights reserved. 青山测试站 | 浙ICP 备 19028628 号</li> -->
         </ul>
@@ -142,6 +163,11 @@
   <!-- <script src="/util/dataJson/colors.json"></script> -->
   <script type="module">
     let that = null;
+
+    const colorJsonPath = "./util/dataJson/colors.json";
+    // 原: https://v1.hitokoto.cn?c=d&max_length=20 , 突然发现偶尔会出现跨域问题
+    const hitokotoPath = "/api-hitokoto/v1.hitokoto.cn?c=d&max_length=20";
+
     new Vue({
       el: "#app",
       data() {
@@ -205,7 +231,7 @@
         //* 获取颜色
         this.getColors();
 
-        window.addEventListener('resize', this.resizeRenderWaves);
+        window.addEventListener("resize", this.resizeRenderWaves);
       },
       methods: {
         // resizeRenderWaves() {
@@ -275,7 +301,7 @@
              * * 注意: 如果 `encode` 参数为 `text`, 那么输出的只有一言正文
              **********************************/
             config.ajax.custom(
-              "https://v1.hitokoto.cn?c=d&max_length=20",
+              hitokotoPath,
               {},
               function (result) {
                 that.checkMottoTimer();
@@ -322,7 +348,7 @@
         //*  获取颜色
         getColors() {
           config.ajax.custom(
-            "/util/dataJson/colors.json",
+            colorJsonPath,
             {},
             function (result) {
               let randomIndex = parseInt(Math.random() * (526 - 0 + 1));
